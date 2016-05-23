@@ -1,10 +1,10 @@
 package app.com.example.android.project1;
 
 
-import android.support.v4.app.Fragment;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +34,7 @@ public class MovieFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public MovieArrayAdapter adapter;
+    private MovieArrayAdapter adapter;
     private GridView gridView;
 
     @Override
@@ -52,7 +52,7 @@ public class MovieFragment extends Fragment {
 
         adapter = new MovieArrayAdapter(getActivity(), new ArrayList<String>());
 
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridview_layout);
+        gridView = (GridView) rootView.findViewById(R.id.gridview_layout);
         gridView.setAdapter(adapter);
 
         return rootView;
@@ -61,7 +61,7 @@ public class MovieFragment extends Fragment {
     private void updateMovies()
     {
         FetchMovies moviesTask = new FetchMovies();
-        moviesTask.execute();
+
     }
 
     @Override
@@ -96,6 +96,7 @@ public class MovieFragment extends Fragment {
             return resultStrs;
         }
 
+        @Override
         protected ArrayList<String> doInBackground(String... params) {
             if (params.length == 0) {
                 return null;
@@ -118,6 +119,8 @@ public class MovieFragment extends Fragment {
                         .build();
 
                 URL url = new URL(builtUri.toString());
+
+                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
