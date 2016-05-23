@@ -1,7 +1,7 @@
 package app.com.example.android.project1;
 
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -30,19 +29,26 @@ import java.util.ArrayList;
  */
 public class MovieFragment extends Fragment {
 
-    private ArrayAdapter<String> adapter;
-    private GridView gridView;
 
     public MovieFragment() {
         // Required empty public constructor
     }
 
+    public MovieArrayAdapter adapter;
+    private GridView gridView;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.imageview_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
 
         adapter = new MovieArrayAdapter(getActivity(), new ArrayList<String>());
 
@@ -52,12 +58,25 @@ public class MovieFragment extends Fragment {
         return rootView;
     }
 
-    public class FetchMovies extends AsyncTask<String, Void, ArrayList<String>>
+    private void updateMovies()
     {
+        FetchMovies moviesTask = new FetchMovies();
+        moviesTask.execute();
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        updateMovies();
+    }
+
+    public class FetchMovies extends AsyncTask<String, Void, ArrayList<String>> {
+        private final String LOG_TAG = FetchMovies.class.getSimpleName();
+
         private ArrayList<String> getMovieDataFromJson(String movieJsonStr)
-                throws JSONException
-        {
-            final String TMDB_RESULTS= "results";
+                throws JSONException {
+            final String TMDB_RESULTS = "results";
             final String TMDB_POSTER = "poster_path";
 
             JSONObject movieJson = new JSONObject(movieJsonStr);
@@ -65,8 +84,7 @@ public class MovieFragment extends Fragment {
 
             ArrayList<String> resultStrs = new ArrayList<String>();
 
-            for (int i = 0; i < movieArray.length(); i++)
-            {
+            for (int i = 0; i < movieArray.length(); i++) {
                 String poster;
 
                 JSONObject movie = movieArray.getJSONObject(i);
@@ -77,10 +95,9 @@ public class MovieFragment extends Fragment {
             }
             return resultStrs;
         }
-        protected ArrayList<String> doInBackground(String... params)
-        {
-            if (params.length == 0)
-            {
+
+        protected ArrayList<String> doInBackground(String... params) {
+            if (params.length == 0) {
                 return null;
             }
 
@@ -91,13 +108,12 @@ public class MovieFragment extends Fragment {
 
             String sortBy = "top_rated?";
 
-            try
-            {
+            try {
                 final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/";
                 final String APPID_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendEncodedPath(sortBy)
+                        .appendPath(sortBy)
                         .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
                         .build();
 
@@ -109,15 +125,13 @@ public class MovieFragment extends Fragment {
 
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
-                if (inputStream == null)
-                {
+                if (inputStream == null) {
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
-                while ((line = reader.readLine()) != null)
-                {
+                while ((line = reader.readLine()) != null) {
                     buffer.append(line + "\n");
                 }
                 if (buffer.length() == 0) {
@@ -127,7 +141,9 @@ public class MovieFragment extends Fragment {
                 movieJsonStr = buffer.toString();
 
             } catch (IOException e) {
-
+                Log.e(LOG_TAG, "Error " + e);
+                // If the code didn't successfully get the weather data, there's no point in attempting
+                // to parse it.
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -144,26 +160,25 @@ public class MovieFragment extends Fragment {
             try {
                 return getMovieDataFromJson(movieJsonStr);
             } catch (JSONException e) {
-
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
             }
             return null;
         }
 
-        
-        protected void onPostExecute(String[] result)
-        {
-            if (result != null)
-            {
+        @Override
+        protected void onPostExecute(ArrayList<String> result) {
+            if (result != null) {
                 adapter.clear();
-            }
-            for (String movieStr : result)
-            {
-                String url = "http://image.tmdb.org/t/p/w185/" + movieStr;
-                adapter.add(url);
+                for (String movieStr : result) {
+                    String url = "http://image.tmdb.org/t/p/w185/" + movieStr;
+                    adapter.add(url);
+                }
             }
         }
     }
 }
+
 
 
 
