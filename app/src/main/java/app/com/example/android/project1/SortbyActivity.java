@@ -17,7 +17,7 @@ implements Preference.OnPreferenceChangeListener
 
         addPreferencesFromResource(R.xml.sort_settings);
 
-       // bindPreferenceSummaryToValue(findPreference(getString(R.string.sort_key)));
+       bindPreferenceSummaryToValue(findPreference(getString(R.string.sort_key)));
     }
 
     private void bindPreferenceSummaryToValue(Preference preference)

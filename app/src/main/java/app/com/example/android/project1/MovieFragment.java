@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +53,10 @@ public class MovieFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
 
+        // Initialize new adapter
         adapter = new MovieArrayAdapter(getActivity(), new ArrayList<String>());
 
+        //initialize gridview, and pass the adapter to the gridview
         gridView = (GridView) rootView.findViewById(R.id.gridview_layout);
         gridView.setAdapter(adapter);
 
@@ -76,6 +79,7 @@ public class MovieFragment extends Fragment {
     }
 
     public class FetchMovies extends AsyncTask<String, Void, ArrayList<String>> {
+        private final String LOG_TAG = FetchMovies.class.getSimpleName();
 
         private ArrayList<String> getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
@@ -113,12 +117,16 @@ public class MovieFragment extends Fragment {
 
             String movieJsonStr = null;
 
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String sortType = sharedPref.getString(getString(R.string.sort_key),
+                    getString(R.string.sort_default));
+
             try {
                 final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/";
                 final String APPID_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendPath(getString(R.string.sort_key))
+                        .appendPath(sortType)
                         .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
                         .build();
 
@@ -146,6 +154,9 @@ public class MovieFragment extends Fragment {
                 movieJsonStr = buffer.toString();
 
             } catch (IOException e) {
+                Log.e(LOG_TAG, "Error " + e);
+                // If the code didn't successfully get the weather data, there's no point in attempting
+                // to parse it.
                     return null;
             } finally {
                 if (urlConnection != null) {
@@ -155,12 +166,15 @@ public class MovieFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
+                        Log.e("PlaceholderFragment", "Error closing stream", e);
                     }
                 }
             }
             try {
                 return getMovieDataFromJson(movieJsonStr);
             } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
             }
             return null;
         }
