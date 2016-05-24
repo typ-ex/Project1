@@ -61,7 +61,7 @@ public class MovieFragment extends Fragment {
     private void updateMovies()
     {
         FetchMovies moviesTask = new FetchMovies();
-
+        moviesTask.execute();
     }
 
     @Override
