@@ -185,7 +185,7 @@ public class MovieFragment extends Fragment {
             if (result != null) {
                 adapter.clear();
                 for (String movieStr : result) {
-                    String url = "http://image.tmdb.org/t/p/w185/" + movieStr;
+                    String url = "http://image.tmdb.org/t/p/w342/" + movieStr;
                     adapter.add(url);
                 }
             }
