@@ -1,11 +1,12 @@
 package app.com.example.android.project1;
 
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class MovieFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,7 +63,9 @@ public class MovieFragment extends Fragment {
     private void updateMovies()
     {
         FetchMovies moviesTask = new FetchMovies();
-        moviesTask.execute();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortPref = prefs.getString(getString(R.string.sort_key), getString(R.string.sort_default));
+        moviesTask.execute(sortPref);
     }
 
     @Override
@@ -72,7 +76,6 @@ public class MovieFragment extends Fragment {
     }
 
     public class FetchMovies extends AsyncTask<String, Void, ArrayList<String>> {
-        private final String LOG_TAG = FetchMovies.class.getSimpleName();
 
         private ArrayList<String> getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
@@ -96,9 +99,12 @@ public class MovieFragment extends Fragment {
             return resultStrs;
         }
 
+        //runs this first
         @Override
         protected ArrayList<String> doInBackground(String... params) {
-            if (params.length == 0) {
+
+            if (params.length == 0)
+            {
                 return null;
             }
 
@@ -107,20 +113,16 @@ public class MovieFragment extends Fragment {
 
             String movieJsonStr = null;
 
-            String sortBy = "top_rated?";
-
             try {
                 final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/";
                 final String APPID_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendPath(sortBy)
+                        .appendPath(getString(R.string.sort_key))
                         .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
                         .build();
 
                 URL url = new URL(builtUri.toString());
-
-                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -144,10 +146,7 @@ public class MovieFragment extends Fragment {
                 movieJsonStr = buffer.toString();
 
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error " + e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
-                return null;
+                    return null;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -156,19 +155,17 @@ public class MovieFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e("PlaceholderFragment", "Error closing stream", e);
                     }
                 }
             }
             try {
                 return getMovieDataFromJson(movieJsonStr);
             } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
             }
             return null;
         }
 
+        //runs last
         @Override
         protected void onPostExecute(ArrayList<String> result) {
             if (result != null) {
