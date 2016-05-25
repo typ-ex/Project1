@@ -17,7 +17,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SortbyActivity"></activity>
+        <activity
+            android:name=".MovieDetailActivity"
+            android:label="Movie Details"
+            android:parentActivityName=".MainActivity">
+
+        </activity>
+        <activity android:name=".SortbyActivity"
+            android:label="Settings"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package app.com.example.android.project1;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -54,14 +56,26 @@ public class MovieFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
 
         // Initialize new adapter
-        adapter = new MovieArrayAdapter(getActivity(), new ArrayList<String>());
+        adapter = new MovieArrayAdapter(getActivity(), new ArrayList<Movie>());
 
         //initialize gridview, and pass the adapter to the gridview
         gridView = (GridView) rootView.findViewById(R.id.gridview_layout);
         gridView.setAdapter(adapter);
 
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie movie = adapter.getItem(position);
+                Intent detailActivity = new Intent(getActivity(), MovieDetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, movie);
+                startActivity(detailActivity);
+            }
+        });
+
         return rootView;
     }
+
+
 
     private void updateMovies()
     {
@@ -78,10 +92,10 @@ public class MovieFragment extends Fragment {
         updateMovies();
     }
 
-    public class FetchMovies extends AsyncTask<String, Void, ArrayList<String>> {
+    public class FetchMovies extends AsyncTask<String, Void, ArrayList<Movie>> {
         private final String LOG_TAG = FetchMovies.class.getSimpleName();
 
-        private ArrayList<String> getMovieDataFromJson(String movieJsonStr)
+        private ArrayList<Movie> getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
             final String TMDB_RESULTS = "results";
             final String TMDB_POSTER = "poster_path";
@@ -89,23 +103,27 @@ public class MovieFragment extends Fragment {
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieArray = movieJson.getJSONArray(TMDB_RESULTS);
 
-            ArrayList<String> resultStrs = new ArrayList<String>();
+            ArrayList<Movie> resultStrs = new ArrayList<Movie>();
 
             for (int i = 0; i < movieArray.length(); i++) {
                 String poster;
 
-                JSONObject movie = movieArray.getJSONObject(i);
+                JSONObject JSONmovie = movieArray.getJSONObject(i);
 
-                poster = movie.getString(TMDB_POSTER);
+                poster = JSONmovie.getString(TMDB_POSTER);
 
-                resultStrs.add(poster);
+                Movie movie = new Movie(poster);
+
+                movie.setMoviePoster(poster);
+
+                resultStrs.add(movie);
             }
             return resultStrs;
         }
 
         //runs this first
         @Override
-        protected ArrayList<String> doInBackground(String... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
 
             if (params.length == 0)
             {
@@ -181,12 +199,14 @@ public class MovieFragment extends Fragment {
 
         //runs last
         @Override
-        protected void onPostExecute(ArrayList<String> result) {
+        protected void onPostExecute(ArrayList<Movie> result) {
             if (result != null) {
                 adapter.clear();
-                for (String movieStr : result) {
-                    String url = "http://image.tmdb.org/t/p/w342/" + movieStr;
-                    adapter.add(url);
+                for (Movie movie : result) {
+                    String path = movie.getMoviePoster();
+                    String url = "http://image.tmdb.org/t/p/w342/" + path;
+                    movie.setMoviePoster(url);
+                    adapter.add(movie);
                 }
             }
         }
