@@ -13,11 +13,11 @@ import java.util.ArrayList;
 /**
  * Created by typ_ex on 5/21/2016.
  */
-public class MovieArrayAdapter extends ArrayAdapter<String>
+public class MovieArrayAdapter extends ArrayAdapter<Movie>
 {
-    private ArrayList<String> movies;
+    private ArrayList<Movie> movies;
     private Context context;
-    public MovieArrayAdapter(Context context, ArrayList<String> movies)
+    public MovieArrayAdapter(Context context, ArrayList<Movie> movies)
     {
         super(context, 0, movies);
         this.movies = movies;
@@ -28,6 +28,7 @@ public class MovieArrayAdapter extends ArrayAdapter<String>
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
+        Movie movie = movies.get(position);
         ImageView imageView;
         if (convertView == null) {
             imageView = new ImageView(context);
@@ -37,8 +38,10 @@ public class MovieArrayAdapter extends ArrayAdapter<String>
             imageView = (ImageView) convertView;
         }
 
-        Picasso.with(context).setDebugging(true);
-        Picasso.with(context).load(movies.get(position)).into(imageView);
+        Picasso
+                .with(context)
+                .load(movies.get(position).getMoviePoster())
+                .into(imageView);
         return imageView;
     }
 }
