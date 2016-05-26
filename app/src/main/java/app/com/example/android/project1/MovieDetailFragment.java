@@ -45,9 +45,15 @@ public class MovieDetailFragment extends Fragment {
             String url = movie.getMoviePoster();
             Picasso.with(getContext()).load(url).into(imageViewPoster);
 
-            textViewPlot.setText(movie.getMoviePlot());
-            textViewRating.setText(movie.getMovieRating());
-            textViewRelease.setText(movie.getMovieRelease());
+            String plot = "Plot" + "\n" + movie.getMoviePlot() + "\n";
+            textViewPlot.setText(plot);
+
+            String rating = "Rating: " + movie.getMovieRating() + "/10" + "\n";
+            textViewRating.setText(rating);
+
+            String date = "Released: " + movie.getMovieRelease();
+
+            textViewRelease.setText(date);
         }
         return rootView;
     }
