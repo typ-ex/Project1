@@ -8,12 +8,43 @@ import android.os.Parcelable;
  */
 public class Movie implements Parcelable
 {
-
-    /*String movieTitle;
+    String movieTitle;
     String moviePlot;
-    Double movieRating;
-    String movieRelease; */
+    String movieRating;
+    String movieRelease;
     String moviePoster;
+
+    public String getMovieTitle() {
+        return movieTitle;
+    }
+
+    public void setMovieTitle(String movieTitle) {
+        this.movieTitle = movieTitle;
+    }
+
+    public String getMoviePlot() {
+        return moviePlot;
+    }
+
+    public void setMoviePlot(String moviePlot) {
+        this.moviePlot = moviePlot;
+    }
+
+    public String getMovieRating() {
+        return movieRating;
+    }
+
+    public void setMovieRating(String movieRating) {
+        this.movieRating = movieRating;
+    }
+
+    public String getMovieRelease() {
+        return movieRelease;
+    }
+
+    public void setMovieRelease(String movieRelease) {
+        this.movieRelease = movieRelease;
+    }
 
     public String getMoviePoster() {
         return moviePoster;
@@ -23,22 +54,21 @@ public class Movie implements Parcelable
         this.moviePoster = moviePoster;
     }
 
-    //String title, String plot, double rating, String release,
-    public Movie(String poster)
+    public Movie(String title, String plot, String rating, String release, String poster)
     {
-        /*this.movieTitle = title;
+        this.movieTitle = title;
         this.moviePlot = plot;
         this.movieRating = rating;
-        this.movieRelease = release; */
+        this.movieRelease = release;
         this.moviePoster = poster;
     }
 
     private Movie(Parcel in)
     {
-       /* movieTitle = in.readString();
+        movieTitle = in.readString();
         moviePlot = in.readString();
-        movieRating = in.readDouble();
-        movieRelease = in.readString(); */
+        movieRating = in.readString();
+        movieRelease = in.readString();
         moviePoster = in.readString();
     }
 
@@ -51,10 +81,10 @@ public class Movie implements Parcelable
     @Override
     public void writeToParcel(Parcel parcel, int i)
     {
-       /* parcel.writeString(movieTitle);
+        parcel.writeString(movieTitle);
         parcel.writeString(moviePlot);
-        parcel.writeDouble(movieRating);
-        parcel.writeString(movieRelease); */
+        parcel.writeString(movieRating);
+        parcel.writeString(movieRelease);
         parcel.writeString(moviePoster);
     }
 
