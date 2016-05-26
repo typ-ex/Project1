@@ -66,8 +66,8 @@ public class MovieFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = adapter.getItem(position);
-                Intent detailActivity = new Intent(getActivity(), MovieDetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, movie);
+                Intent detailActivity = new Intent(getActivity(), MovieDetailActivity.class);
+                detailActivity.putExtra("movie", movie);
                 startActivity(detailActivity);
             }
         });
@@ -99,6 +99,11 @@ public class MovieFragment extends Fragment {
                 throws JSONException {
             final String TMDB_RESULTS = "results";
             final String TMDB_POSTER = "poster_path";
+            final String TMDB_TITLE = "title";
+            final String TMDB_PLOT = "overview";
+            final String TMDB_RATING = "vote_average";
+            final String TMDB_DATE = "release_date";
+
 
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieArray = movieJson.getJSONArray(TMDB_RESULTS);
@@ -107,14 +112,27 @@ public class MovieFragment extends Fragment {
 
             for (int i = 0; i < movieArray.length(); i++) {
                 String poster;
+                String title;
+                String overView;
+                String rating;
+                String date;
 
                 JSONObject JSONmovie = movieArray.getJSONObject(i);
 
                 poster = JSONmovie.getString(TMDB_POSTER);
+                title = JSONmovie.getString(TMDB_TITLE);
+                overView = JSONmovie.getString(TMDB_PLOT);
+                rating = JSONmovie.getString(TMDB_RATING);
+                date = JSONmovie.getString(TMDB_DATE);
 
-                Movie movie = new Movie(poster);
+                Movie movie = new Movie(poster, title, overView, rating, date);
 
                 movie.setMoviePoster(poster);
+                movie.setMovieTitle(title);
+                movie.setMoviePlot(overView);
+                movie.setMovieRating(rating);
+                movie.setMovieRelease(date);
+
 
                 resultStrs.add(movie);
             }
