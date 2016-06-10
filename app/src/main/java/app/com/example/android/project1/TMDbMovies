@@ -1,0 +1,10 @@
+package app.com.example.android.project1;
+
+import java.util.ArrayList;
+
+/**
+ * Created by typ_ex on 6/10/2016.
+ */
+public class TMDbMovies {
+    ArrayList<Movie> movies;
+}
