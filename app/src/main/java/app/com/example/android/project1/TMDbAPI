@@ -1,0 +1,17 @@
+package app.com.example.android.project1;
+
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+
+/**
+ * Created by typ_ex on 6/10/2016.
+ */
+public interface TMDbAPI {
+
+
+    @GET("/3/movie/{sort}")
+    Call<TMDbMovies> loadMovies(@Path("sort") String sortType,
+                                @Query("api_key") String key);
+}
