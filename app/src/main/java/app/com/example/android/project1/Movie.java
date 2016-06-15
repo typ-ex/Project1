@@ -3,16 +3,43 @@ package app.com.example.android.project1;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+
 /**
  * Created by typ_ex on 5/24/2016.
  */
+
+//basic setup of this class was taken from the Udacity Google+ webcast
 public class Movie implements Parcelable
 {
+    @SerializedName("original_title")
     String movieTitle;
+
+    @SerializedName("overview")
     String moviePlot;
+
+    @SerializedName("vote_average")
     String movieRating;
+
+    @SerializedName("release_date")
     String movieRelease;
+
+    @SerializedName("poster_path")
     String moviePoster;
+
+    public ArrayList<Movie> getItems()
+    {
+        return movies;
+    }
+
+    public void setMovies(ArrayList<Movie> movies)
+    {
+        this.movies = movies;
+    }
+
+    private ArrayList<Movie> movies;
 
     public String getMovieTitle() {
         return movieTitle;
