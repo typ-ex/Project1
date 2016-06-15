@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieFragment extends Fragment implements Callback<TMDbMovies> {
+public class MovieFragment extends Fragment implements TMDbService {
 
 
     public MovieFragment() {
@@ -34,6 +33,7 @@ public class MovieFragment extends Fragment implements Callback<TMDbMovies> {
 
     private MovieArrayAdapter adapter;
     private GridView gridView;
+    private ArrayList<Movie> movies;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -49,8 +49,12 @@ public class MovieFragment extends Fragment implements Callback<TMDbMovies> {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
 
+        // Initialize new adapter
+        adapter = new MovieArrayAdapter(getActivity(), new ArrayList<Movie>());
+
         //initialize gridview, and pass the adapter to the gridview
         gridView = (GridView) rootView.findViewById(R.id.gridview_layout);
+        gridView.setAdapter(adapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -67,21 +71,36 @@ public class MovieFragment extends Fragment implements Callback<TMDbMovies> {
 
     private void updateMovies()
     {
-        /*FetchMovies moviesTask = new FetchMovies();*/
+        //FetchMovies moviesTask = new FetchMovies();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortPref = prefs.getString(getString(R.string.sort_key), getString(R.string.sort_default));
-        String key = BuildConfig.TMDB_API_KEY;
+        //moviesTask.execute(sortPref);
+
 
         Retrofit retroFit = new Retrofit.Builder()
-                .baseUrl("http://api.themoviedb.org/")
+                .baseUrl("http://api.themoviedb.org")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        TMDbAPI tMDbAPI = retroFit.create(TMDbAPI.class);
+        TMDbService tmDbAPI = retroFit.create(TMDbService.class);
 
-        Call<TMDbMovies> call = tMDbAPI.loadMovies(sortPref, key);
+        Call<Movie> call = tmDbAPI.loadMovies(sortPref, BuildConfig.TMDB_API_KEY);
+        call.enqueue(new Callback<Movie>() {
+            @Override
+            public void onResponse(Response<Movie> response) {
+                movies = response.body().getItems();
+                for (Movie movie : movies) {
+                    adapter.add(movie);
+                }
+            }
 
-        call.enqueue(this);
+            @Override
+            public void onFailure(Throwable t)
+            {
+
+            }
+
+        }
     }
 
     @Override
@@ -91,22 +110,7 @@ public class MovieFragment extends Fragment implements Callback<TMDbMovies> {
         updateMovies();
     }
 
-    @Override
-    public void onResponse(Response<TMDbMovies> response, Retrofit retroFit)
-    {
-        adapter = new MovieArrayAdapter(getActivity(), new ArrayList<Movie>());
-        gridView.setAdapter(adapter);
-        adapter.clear();
-        adapter.addAll(response.body().movies);
-    }
-
-    @Override
-    public void onFailure(Throwable t)
-    {
-        Toast.makeText(MovieFragment.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-    }
-
-   /* public class FetchMovies extends AsyncTask<String, Void, ArrayList<Movie>> {
+    /*public class FetchMovies extends AsyncTask<String, Void, ArrayList<Movie>> {
         private final String LOG_TAG = FetchMovies.class.getSimpleName();
 
         private ArrayList<Movie> getMovieDataFromJson(String movieJsonStr)
