@@ -87,7 +87,7 @@ public class MovieFragment extends Fragment implements TMDbService {
         Call<Movie> call = tmDbAPI.loadMovies(sortPref, BuildConfig.TMDB_API_KEY);
         call.enqueue(new Callback<Movie>() {
             @Override
-            public void onResponse(Response<Movie> response) {
+           public void onResponse(Call<Movie> call, Response<Movie> response) {
                 movies = response.body().getItems();
                 for (Movie movie : movies) {
                     adapter.add(movie);
@@ -95,12 +95,12 @@ public class MovieFragment extends Fragment implements TMDbService {
             }
 
             @Override
-            public void onFailure(Throwable t)
+            public void onFailure(Call<Movie> call, Throwable t)
             {
 
             }
 
-        }
+        });
     }
 
     @Override
