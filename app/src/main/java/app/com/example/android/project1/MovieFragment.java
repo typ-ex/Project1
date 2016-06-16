@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieFragment extends Fragment implements TMDbService {
+public class MovieFragment extends Fragment {
 
 
     public MovieFragment() {
@@ -78,16 +78,18 @@ public class MovieFragment extends Fragment implements TMDbService {
 
 
         Retrofit retroFit = new Retrofit.Builder()
-                .baseUrl("http://api.themoviedb.org")
+                .baseUrl("http://api.themoviedb.org/3/movie/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        TMDbService tmDbAPI = retroFit.create(TMDbService.class);
+        TMDbService.TMDbAPI tmDbAPI = retroFit.create(TMDbService.TMDbAPI.class);
 
+        //passes sort preference and api key into the network call
         Call<Movie> call = tmDbAPI.loadMovies(sortPref, BuildConfig.TMDB_API_KEY);
+        //equivalent to onPostExecute of AsyncTask
         call.enqueue(new Callback<Movie>() {
             @Override
-           public void onResponse(Call<Movie> call, Response<Movie> response) {
+            public void onResponse(Call<Movie> call, Response<Movie> response) {
                 movies = response.body().getItems();
                 for (Movie movie : movies) {
                     adapter.add(movie);
@@ -97,7 +99,7 @@ public class MovieFragment extends Fragment implements TMDbService {
             @Override
             public void onFailure(Call<Movie> call, Throwable t)
             {
-
+                System.out.print(call);
             }
 
         });
