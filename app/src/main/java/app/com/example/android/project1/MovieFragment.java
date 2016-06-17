@@ -72,10 +72,8 @@ public class MovieFragment extends Fragment {
 
     private void updateMovies()
     {
-        //FetchMovies moviesTask = new FetchMovies();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortPref = prefs.getString(getString(R.string.sort_key), getString(R.string.sort_default));
-        //moviesTask.execute(sortPref);
 
 
         Retrofit retroFit = new Retrofit.Builder()
