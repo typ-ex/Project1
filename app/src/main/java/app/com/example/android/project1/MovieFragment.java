@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,17 +71,16 @@ public class MovieFragment extends Fragment {
 
     private void updateMovies()
     {
-        //FetchMovies moviesTask = new FetchMovies();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortPref = prefs.getString(getString(R.string.sort_key), getString(R.string.sort_default));
-        //moviesTask.execute(sortPref);
 
-
+        // Making the network call
         Retrofit retroFit = new Retrofit.Builder()
                 .baseUrl("http://api.themoviedb.org")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        //Creating a class from the interface
         TMDbService.TMDbAPI tmDbAPI = retroFit.create(TMDbService.TMDbAPI.class);
 
         //passes sort preference and api key into the network call
@@ -92,7 +90,7 @@ public class MovieFragment extends Fragment {
             @Override
             public void onResponse(Call<MovieResults> call, Response<MovieResults> response) {
                 movies = response.body().getItems();
-                adapter.clear();
+                adapter.clear(); //used to change the view upon pref change
                 for (MovieResults.Movie movie : movies) {
                     String path = movie.getMoviePoster();
                     String url = "http://image.tmdb.org/t/p/w342/" + path;
@@ -100,8 +98,6 @@ public class MovieFragment extends Fragment {
 
                     adapter.add(movie);
                 }
-
-                Log.i("response",response.raw().toString());
             }
 
             @Override
