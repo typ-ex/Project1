@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ public class MovieFragment extends Fragment {
 
     private MovieArrayAdapter adapter;
     private GridView gridView;
-    private ArrayList<Movie> movies;
+    private ArrayList<MovieResults.Movie> movies;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -50,7 +51,7 @@ public class MovieFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
 
         // Initialize new adapter
-        adapter = new MovieArrayAdapter(getActivity(), new ArrayList<Movie>());
+        adapter = new MovieArrayAdapter(getActivity(), new ArrayList<MovieResults.Movie>());
 
         //initialize gridview, and pass the adapter to the gridview
         gridView = (GridView) rootView.findViewById(R.id.gridview_layout);
@@ -59,7 +60,7 @@ public class MovieFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Movie movie = adapter.getItem(position);
+                MovieResults.Movie movie = adapter.getItem(position);
                 Intent detailActivity = new Intent(getActivity(), MovieDetailActivity.class);
                 detailActivity.putExtra("movie", movie);
                 startActivity(detailActivity);
@@ -78,26 +79,28 @@ public class MovieFragment extends Fragment {
 
 
         Retrofit retroFit = new Retrofit.Builder()
-                .baseUrl("http://api.themoviedb.org/")
+                .baseUrl("http://api.themoviedb.org")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         TMDbService.TMDbAPI tmDbAPI = retroFit.create(TMDbService.TMDbAPI.class);
 
         //passes sort preference and api key into the network call
-        Call<Movie> call = tmDbAPI.loadMovies(sortPref, BuildConfig.TMDB_API_KEY);
+        Call<MovieResults> call = tmDbAPI.loadMovies(sortPref, BuildConfig.TMDB_API_KEY);
         //equivalent to onPostExecute of AsyncTask
-        call.enqueue(new Callback<Movie>() {
+        call.enqueue(new Callback<MovieResults>() {
             @Override
-            public void onResponse(Call<Movie> call, Response<Movie> response) {
+            public void onResponse(Call<MovieResults> call, Response<MovieResults> response) {
                 movies = response.body().getItems();
-                for (Movie movie : movies) {
+                for (MovieResults.Movie movie : movies) {
                     adapter.add(movie);
                 }
+
+                Log.i("response",response.raw().toString());
             }
 
             @Override
-            public void onFailure(Call<Movie> call, Throwable t)
+            public void onFailure(Call<MovieResults> call, Throwable t)
             {
                 System.out.print(call);
             }
