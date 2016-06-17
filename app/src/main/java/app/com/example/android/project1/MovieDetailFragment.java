@@ -33,7 +33,7 @@ public class MovieDetailFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         if (intent != null)
         {
-            Movie movie = intent.getParcelableExtra("movie");
+            MovieResults.Movie movie = intent.getParcelableExtra("movie");
             TextView textViewTitle = (TextView) rootView.findViewById(R.id.title);
             ImageView imageViewPoster = (ImageView) rootView.findViewById(R.id.poster);
             TextView textViewPlot = (TextView) rootView.findViewById(R.id.plot);
