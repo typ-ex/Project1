@@ -16,9 +16,10 @@ public class MovieResults {
     public ArrayList<Movie> getItems() {
         return movies;
     }
+    @SerializedName("results")
     private ArrayList<Movie> movies;
 
-public class Movie implements Parcelable {
+public static class Movie implements Parcelable {
     @SerializedName("original_title")
     String movieTitle;
 
@@ -38,32 +39,17 @@ public class Movie implements Parcelable {
         return movieTitle;
     }
 
-    public void setMovieTitle(String movieTitle) {
-        this.movieTitle = movieTitle;
-    }
-
     public String getMoviePlot() {
         return moviePlot;
     }
 
-    public void setMoviePlot(String moviePlot) {
-        this.moviePlot = moviePlot;
-    }
 
     public String getMovieRating() {
         return movieRating;
     }
 
-    public void setMovieRating(String movieRating) {
-        this.movieRating = movieRating;
-    }
-
     public String getMovieRelease() {
         return movieRelease;
-    }
-
-    public void setMovieRelease(String movieRelease) {
-        this.movieRelease = movieRelease;
     }
 
     public String getMoviePoster() {
@@ -73,15 +59,7 @@ public class Movie implements Parcelable {
     public void setMoviePoster(String moviePoster) {
         this.moviePoster = moviePoster;
     }
-
-    public Movie(String title, String plot, String rating, String release, String poster) {
-        this.movieTitle = title;
-        this.moviePlot = plot;
-        this.movieRating = rating;
-        this.movieRelease = release;
-        this.moviePoster = poster;
-    }
-
+    
     private Movie(Parcel in) {
         movieTitle = in.readString();
         moviePlot = in.readString();
@@ -104,7 +82,7 @@ public class Movie implements Parcelable {
         parcel.writeString(moviePoster);
     }
 
-    public final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+    public final static Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);
         }
