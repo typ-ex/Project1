@@ -72,8 +72,10 @@ public class MovieFragment extends Fragment {
 
     private void updateMovies()
     {
+        //FetchMovies moviesTask = new FetchMovies();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortPref = prefs.getString(getString(R.string.sort_key), getString(R.string.sort_default));
+        //moviesTask.execute(sortPref);
 
 
         Retrofit retroFit = new Retrofit.Builder()
@@ -90,7 +92,12 @@ public class MovieFragment extends Fragment {
             @Override
             public void onResponse(Call<MovieResults> call, Response<MovieResults> response) {
                 movies = response.body().getItems();
+                adapter.clear();
                 for (MovieResults.Movie movie : movies) {
+                    String path = movie.getMoviePoster();
+                    String url = "http://image.tmdb.org/t/p/w342/" + path;
+                    movie.setMoviePoster(url);
+
                     adapter.add(movie);
                 }
 
@@ -100,7 +107,7 @@ public class MovieFragment extends Fragment {
             @Override
             public void onFailure(Call<MovieResults> call, Throwable t)
             {
-                System.out.print(call);
+
             }
 
         });
