@@ -12,8 +12,13 @@ import java.util.ArrayList;
  */
 
 //basic setup of this class was taken from the Udacity Google+ webcast
-public class Movie implements Parcelable
-{
+public class MovieResults {
+    public ArrayList<Movie> getItems() {
+        return movies;
+    }
+    private ArrayList<Movie> movies;
+
+public class Movie implements Parcelable {
     @SerializedName("original_title")
     String movieTitle;
 
@@ -28,18 +33,6 @@ public class Movie implements Parcelable
 
     @SerializedName("poster_path")
     String moviePoster;
-
-    public ArrayList<Movie> getItems()
-    {
-        return movies;
-    }
-
-    public void setMovies(ArrayList<Movie> movies)
-    {
-        this.movies = movies;
-    }
-
-    private ArrayList<Movie> movies;
 
     public String getMovieTitle() {
         return movieTitle;
@@ -81,8 +74,7 @@ public class Movie implements Parcelable
         this.moviePoster = moviePoster;
     }
 
-    public Movie(String title, String plot, String rating, String release, String poster)
-    {
+    public Movie(String title, String plot, String rating, String release, String poster) {
         this.movieTitle = title;
         this.moviePlot = plot;
         this.movieRating = rating;
@@ -90,8 +82,7 @@ public class Movie implements Parcelable
         this.moviePoster = poster;
     }
 
-    private Movie(Parcel in)
-    {
+    private Movie(Parcel in) {
         movieTitle = in.readString();
         moviePlot = in.readString();
         movieRating = in.readString();
@@ -100,14 +91,12 @@ public class Movie implements Parcelable
     }
 
     @Override
-    public int describeContents()
-    {
+    public int describeContents() {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i)
-    {
+    public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(movieTitle);
         parcel.writeString(moviePlot);
         parcel.writeString(movieRating);
@@ -115,18 +104,14 @@ public class Movie implements Parcelable
         parcel.writeString(moviePoster);
     }
 
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>()
-    {
-        public Movie createFromParcel(Parcel in)
-        {
+    public final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel in) {
             return new Movie(in);
         }
 
-        public Movie[] newArray(int i)
-        {
+        public Movie[] newArray(int i) {
             return new Movie[i];
         }
     };
-
-
+}
 }
