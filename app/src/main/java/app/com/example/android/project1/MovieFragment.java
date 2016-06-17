@@ -78,7 +78,7 @@ public class MovieFragment extends Fragment {
 
 
         Retrofit retroFit = new Retrofit.Builder()
-                .baseUrl("http://api.themoviedb.org/3/movie/")
+                .baseUrl("http://api.themoviedb.org/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
