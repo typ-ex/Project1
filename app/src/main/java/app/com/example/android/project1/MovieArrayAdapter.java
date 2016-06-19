@@ -41,6 +41,8 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie>
         Picasso
                 .with(context)
                 .load(movies.get(position).getMoviePoster())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.error)
                 .into(imageView);
         return imageView;
     }
