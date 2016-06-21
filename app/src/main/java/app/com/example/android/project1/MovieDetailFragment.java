@@ -12,17 +12,25 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MovieDetailFragment extends Fragment {
 
-    private String movieStr;
-
     public MovieDetailFragment() {
         setHasOptionsMenu(true);
     }
+
+    //pre associate the views
+    @BindView(R.id.title) TextView textViewTitle;
+    @BindView(R.id.poster) ImageView imageViewPoster;
+    @BindView(R.id.plot) TextView textViewPlot;
+    @BindView(R.id.rating) TextView textViewRating;
+    @BindView(R.id.release) TextView textViewRelease;
 
 
     @Override
@@ -30,15 +38,18 @@ public class MovieDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
+        ButterKnife.bind(rootView);
         Intent intent = getActivity().getIntent();
         if (intent != null)
         {
             MovieResults.Movie movie = intent.getParcelableExtra("movie");
-            TextView textViewTitle = (TextView) rootView.findViewById(R.id.title);
+            /*TextView textViewTitle = (TextView) rootView.findViewById(R.id.title);
             ImageView imageViewPoster = (ImageView) rootView.findViewById(R.id.poster);
             TextView textViewPlot = (TextView) rootView.findViewById(R.id.plot);
             TextView textViewRating = (TextView) rootView.findViewById(R.id.rating);
-            TextView textViewRelease = (TextView) rootView.findViewById(R.id.release);
+            TextView textViewRelease = (TextView) rootView.findViewById(R.id.release);*/
+
+            ButterKnife.setDebug(true);
 
             textViewTitle.setText(movie.getMovieTitle());
 
@@ -54,6 +65,8 @@ public class MovieDetailFragment extends Fragment {
             String date = "Released: " + movie.getMovieRelease();
 
             textViewRelease.setText(date);
+
+
         }
         return rootView;
     }
