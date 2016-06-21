@@ -38,7 +38,7 @@ public class MovieDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-        ButterKnife.bind(rootView);
+        ButterKnife.bind(this, rootView);
         Intent intent = getActivity().getIntent();
         if (intent != null)
         {
@@ -48,8 +48,6 @@ public class MovieDetailFragment extends Fragment {
             TextView textViewPlot = (TextView) rootView.findViewById(R.id.plot);
             TextView textViewRating = (TextView) rootView.findViewById(R.id.rating);
             TextView textViewRelease = (TextView) rootView.findViewById(R.id.release);*/
-
-            ButterKnife.setDebug(true);
 
             textViewTitle.setText(movie.getMovieTitle());
 
